@@ -1,0 +1,136 @@
+.contentContainer {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contentInner {
+  width: 720px;
+  padding: 20px;
+}
+
+.contentInner .inner {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.headMessage {
+  margin-bottom: 30px;
+  margin-top: 20px;
+}
+
+.headMessage h2 {
+  font-weight: 300;
+  font-size: 32px;
+  line-height: 120%;
+}
+
+.headMessage .hlt {
+  color: #1739aa;
+  font-weight: 700;
+}
+
+.contentInner .inner > span {
+  font-size: 13px;
+  color: #54644b;
+  text-align: center;
+}
+
+.checkbox {
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: text-top;
+  width: 22px;
+  height: 22px;
+  background: #e6ecf1;
+  border-radius: 6px;
+  border: 1px solid #d9e0e6;
+}
+
+.contentInner .inner label span {
+  font-size: 13px;
+  color: #4b5a64;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.contentInner h5 {
+  margin-bottom: 10px;
+}
+
+.contentInner .date {
+  text-align: center;
+  font-weight: bold;
+}
+
+.contentInner input {
+  border: 1px solid #d9e0e6;
+  background-color: #f2f5f7;
+  margin-bottom: 30px;
+  height: 48px;
+  line-height: 48px;
+  border-radius: 16px;
+  padding: 5px 15px;
+  box-sizing: border-box;
+}
+
+.input {
+  border: 1px solid #d9e0e6;
+  background-color: #f2f5f7;
+  margin-bottom: 10px;
+  height: 48px;
+  line-height: 48px;
+  border-radius: 16px;
+  padding: 5px 15px;
+  box-sizing: border-box;
+}
+
+.contentInner button,
+.joinORLogin {
+  border: none;
+  cursor: pointer;
+  border-radius: 12px;
+  width: 100%;
+  font-size: 16px;
+  color: #ccc;
+  background-color: #1739aa;
+  padding: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.contentInner .level {
+  display: flex;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+}
+
+.contentInner .levelCheck {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.contentInner .level button {
+  margin-left: 10px;
+  padding: 8px 12px;
+  border: 0;
+  outline: 0;
+  font-size: 12px;
+  background-color: #f2f5f7;
+  border-radius: 20px;
+}
+
+.contentInner .level .button-active {
+  background-color: #1739aa;
+}
+
+.error {
+  color: #e01e5a;
+  margin: 8px 0 16px;
+  font-weight: bold;
+  text-align: center;
+}
