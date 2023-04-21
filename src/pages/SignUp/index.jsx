@@ -5,7 +5,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "util/fetcher";
 import levelType from "util/levelType";
-import loading from "imgs/logo_grey_kr.svg";
+import loading from "imgs/loading.png";
 
 function SignUp() {
   const { data: userData } = useSWR("/users", fetcher);

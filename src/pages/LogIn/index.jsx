@@ -5,6 +5,7 @@ import useInput from "hooks/useInput";
 import axios from "axios";
 import fetcher from "util/fetcher";
 import useSWR from "swr";
+import loading from "imgs/loading.png";
 
 function LogIn() {
   const { data: userData } = useSWR("/users", fetcher);
@@ -30,6 +31,10 @@ function LogIn() {
     },
     [id, password]
   );
+
+  if (userData === undefined) {
+    return <img className="loading" src={loading} alt="로딩중..." />;
+  }
 
   if (userData) {
     return <Navigate to="/main" />;

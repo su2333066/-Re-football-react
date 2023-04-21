@@ -3,7 +3,9 @@ import "pages/Main/styles.css";
 import fetcher from "util/fetcher";
 import useSWR from "swr";
 import { Navigate } from "react-router-dom";
-import loading from "imgs/logo_grey_kr.svg";
+import loading from "imgs/loading.png";
+import Navbar from "components/Navbar";
+import Footer from "components/Footer";
 
 function Main() {
   const { data: userData } = useSWR("/users", fetcher);
@@ -16,7 +18,19 @@ function Main() {
     return <Navigate to="/login" />;
   }
 
-  return <div>메인</div>;
+  return (
+    <div className="container">
+      <Navbar />
+
+      {/* <Carousel /> */}
+
+      {/* <button className="matchBtn" onClick={매치등록}>
+        +
+      </button> */}
+
+      <Footer />
+    </div>
+  );
 }
 
 export default Main;
