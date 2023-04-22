@@ -4,6 +4,7 @@ import "App.css";
 import LogIn from "pages/LogIn";
 import SignUp from "pages/SignUp";
 import Main from "pages/Main";
+import Match from "pages/Match";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 
@@ -14,6 +15,7 @@ function App() {
       <Route exact path="/signup" element={<SignUp />} />
       <Route exact path="/login" element={<LogIn />} />
       <Route exact path="/main" element={<Main />} />
+      <Route exact path="/match" element={<Match />} />
     </Routes>
   );
 }

@@ -1,0 +1,18 @@
+.sliderContainer {
+  background-color: #f2f5f7;
+  border-bottom: 1px solid #ddd;
+}
+
+.sliderBox {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.sliderBox .sliderImgBox {
+  padding: 20px 40px;
+}
+
+.sliderBox .sliderImgBox img {
+  width: 100%;
+  border-radius: 20px;
+}

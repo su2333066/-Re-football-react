@@ -4,3 +4,56 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.matchBtn {
+  position: fixed;
+  bottom: 60px;
+  right: 60px;
+  padding: 10px 10px;
+  border: 0;
+  outline: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 30px;
+  text-align: center;
+  background-color: #d9c1e9;
+  color: white;
+}
+
+.formContainer {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.formContainer .matchForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.formContainer .matchForm label {
+  padding: 30px;
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.formContainer .matchForm label > input {
+  border: 1px solid #d9e0e6;
+  background-color: #f2f5f7;
+  margin-bottom: 10px;
+  height: 24px;
+  line-height: 48px;
+  border-radius: 12px;
+  padding: 5px 15px;
+  box-sizing: border-box;
+}
+
+.formContainer .matchForm > button {
+  background-color: #1739aa;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+}

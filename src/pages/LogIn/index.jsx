@@ -8,12 +8,10 @@ import useSWR from "swr";
 import loading from "imgs/loading.png";
 
 function LogIn() {
-  const { data: userData } = useSWR("/users", fetcher);
+  const { data: userData, mutate } = useSWR("/users", fetcher);
 
   const [id, onChangeID] = useInput("");
   const [password, onChangePassword] = useInput("");
-
-  const navigation = useNavigate();
 
   const onLogIn = useCallback(
     (e) => {
@@ -24,9 +22,7 @@ function LogIn() {
         data: { id, password },
       }).then((response) => {
         alert(response.data.message);
-        if (response.data.code === "success") {
-          navigation("/main");
-        }
+        mutate("/api/user");
       });
     },
     [id, password]

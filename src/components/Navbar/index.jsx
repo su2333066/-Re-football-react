@@ -1,15 +1,13 @@
-import "components/Navbar/styles.css";
 import fm from "imgs/fm.png";
+import "components/Navbar/styles.css";
 
 const Navbar = ({ myProfile, keywordSearch, setData }) => {
   return (
     <div className="navbar">
       <div className="navContainer">
-        <div className="navLogo">
-          <a href="/">
-            <img src={fm} alt="풋볼매니아" />
-          </a>
-        </div>
+        <a href="/">
+          <img className="logo" src={fm} alt="풋볼매니아" />
+        </a>
         <div className="navRight">
           <div className="navSearch">
             <button onClick={keywordSearch}>

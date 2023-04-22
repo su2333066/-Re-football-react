@@ -1,14 +1,22 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import "pages/Main/styles.css";
 import fetcher from "util/fetcher";
 import useSWR from "swr";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate, useRevalidator } from "react-router-dom";
 import loading from "imgs/loading.png";
 import Navbar from "components/Navbar";
 import Footer from "components/Footer";
+import Carousel from "components/Carousel";
+import useInput from "hooks/useInput";
 
 function Main() {
+  const navigation = useNavigate();
+
   const { data: userData } = useSWR("/users", fetcher);
+
+  const onMatch = useCallback(() => {
+    navigation("/match");
+  }, []);
 
   if (userData === undefined) {
     return <img className="loading" src={loading} alt="로딩중..." />;
@@ -22,11 +30,11 @@ function Main() {
     <div className="container">
       <Navbar />
 
-      {/* <Carousel /> */}
+      <Carousel />
 
-      {/* <button className="matchBtn" onClick={매치등록}>
-        +
-      </button> */}
+      <button className="matchBtn" onClick={onMatch}>
+        🔜
+      </button>
 
       <Footer />
     </div>

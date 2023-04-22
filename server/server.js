@@ -9,7 +9,7 @@ const cron = require("node-cron");
 
 const app = express();
 
-const port = 4000;
+const port = 4085;
 
 app.use(express.json());
 app.use(
@@ -128,10 +128,6 @@ cron.schedule("0 */1 * * *", async function () {
     const query = `UPDATE matching SET matchtry='${matchtry}' WHERE seq='${마감매칭값.seq}'`;
     await 디비실행(query);
   }
-});
-
-app.get("/", (req, res) => {
-  res.send("Hello");
 });
 
 app.get("/detail", async (req, res) => {
@@ -315,7 +311,7 @@ app.post("/match/apply", async (req, res) => {
 });
 
 app.post("/match", async (req, res) => {
-  const { place, link, matchtime, memo, level } = req.body;
+  const { place, address, time, memo, level } = req.body;
   const { loginUser } = req.session;
 
   const result = {
@@ -325,15 +321,15 @@ app.post("/match", async (req, res) => {
 
   if (place === "") {
     result.code = "fail";
-    result.message = "풋살장 위치를 입력해주세요";
+    result.message = "장소를 입력해주세요";
   }
 
-  if (link === "") {
+  if (address === "") {
     result.code = "fail";
-    result.message = "링크를 입력해주세요";
+    result.message = "주소를 입력해주세요";
   }
 
-  if (matchtime === "") {
+  if (time === "") {
     result.code = "fail";
     result.message = "경기 날짜를 입력해주세요";
   }
@@ -344,7 +340,7 @@ app.post("/match", async (req, res) => {
   }
 
   await 디비실행(
-    `INSERT INTO matching(place,link,matchtime,memo,level,user_seq) VALUES('${place}','${link}','${matchtime}','${memo}','${level}','${loginUser.seq}')`
+    `INSERT INTO matching(place,link,matchtime,memo,level,user_seq) VALUES('${place}','${address}','${time}','${memo}','${level}','${loginUser.seq}')`
   );
 
   res.send(result);

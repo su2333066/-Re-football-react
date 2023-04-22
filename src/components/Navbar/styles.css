@@ -8,9 +8,9 @@
   align-items: center;
 }
 
-.navbar .navContainer .navLogo img {
-  width: 72px;
-  height: 36px;
+.navbar .navContainer .logo {
+  width: 80px;
+  height: 40px;
   object-fit: cover;
 }
 
