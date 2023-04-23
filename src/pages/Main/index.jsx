@@ -8,14 +8,26 @@ import Navbar from "components/Navbar";
 import Footer from "components/Footer";
 import Carousel from "components/Carousel";
 import useInput from "hooks/useInput";
+import axios from "axios";
 
 function Main() {
   const navigation = useNavigate();
 
-  const { data: userData } = useSWR("/users", fetcher);
+  const { data: userData, mutate } = useSWR("/users", fetcher);
 
   const onMatch = useCallback(() => {
     navigation("/match");
+  }, []);
+
+  const onLogout = useCallback(() => {
+    axios
+      .get("/logout", {
+        withCredentials: true,
+      })
+      .then((response) => {
+        alert(response.data.message);
+        mutate(false, false);
+      });
   }, []);
 
   if (userData === undefined) {
@@ -28,7 +40,7 @@ function Main() {
 
   return (
     <div className="container">
-      <Navbar />
+      <Navbar onLogout={onLogout} />
 
       <Carousel />
 

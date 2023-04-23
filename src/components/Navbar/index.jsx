@@ -1,7 +1,7 @@
 import fm from "imgs/fm.png";
 import "components/Navbar/styles.css";
 
-const Navbar = ({ myProfile, keywordSearch, setData }) => {
+const Navbar = ({ myProfile, keywordSearch, setData, onLogout }) => {
   return (
     <div className="navbar">
       <div className="navContainer">
@@ -19,23 +19,13 @@ const Navbar = ({ myProfile, keywordSearch, setData }) => {
               placeholder="지역, 구장 이름으로 찾기"
               onChange={setData}
             ></input>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                myProfile();
-              }}
-            >
+            <button onClick={myProfile}>
               <i className="fa-regular fa-user"></i>
             </button>
           </div>
 
-          <button
-            className="moreBtn"
-            onClick={() => {
-              alert("준비중");
-            }}
-          >
-            <i className="fa-solid fa-bars"></i>
+          <button onClick={onLogout}>
+            <i class="fa-regular fa-circle-xmark"></i>
           </button>
         </div>
       </div>

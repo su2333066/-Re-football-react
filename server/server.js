@@ -2,14 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
 const mysql = require("mysql2");
-
-const db = mysql.createPoolCluster();
-
-const cron = require("node-cron");
-
-const app = express();
-
 const port = 4085;
+const app = express();
+const db = mysql.createPoolCluster();
+const cron = require("node-cron");
 
 app.use(express.json());
 app.use(
@@ -19,7 +15,6 @@ app.use(
     saveUninitialized: true,
   })
 );
-
 app.use(
   cors({
     origin: true,
@@ -56,6 +51,250 @@ function 디비실행(query) {
     });
   });
 }
+
+app.get("/users", (req, res) => {
+  res.json(req.session.loginUser || false);
+});
+
+app.post("/login", async (req, res) => {
+  const { id, password } = req.body;
+
+  const result = {
+    code: "success",
+    message: "로그인 되었습니다",
+  };
+
+  if (id === "") {
+    result.code = "fail";
+    result.message = "아이디 또는 비밀번호를 입력해주세요";
+    res.send(result);
+    return;
+  }
+
+  if (password === "") {
+    result.code = "fail";
+    result.message = "아이디 또는 비밀번호를 입력해주세요";
+    res.send(result);
+    return;
+  }
+
+  const user = await 디비실행(
+    `SELECT * FROM user WHERE id='${id}' AND password = '${password}'`
+  );
+
+  if (user.length === 0) {
+    result.code = "fail";
+    result.message = "사용자가 존재하지 않습니다";
+  }
+
+  if (result.code === "fail") {
+    res.send(result);
+    return;
+  }
+
+  req.session.loginUser = user[0];
+  req.session.save();
+
+  res.send(result);
+});
+
+app.get("/logout", async (req, res) => {
+  req.session.destroy();
+  res.send({
+    code: "success",
+    message: "로그아웃 되었습니다",
+  });
+});
+
+app.post("/join", async (req, res) => {
+  const { id, name, level, password } = req.body;
+
+  const result = {
+    code: "success",
+    message: "회원가입 되었습니다",
+  };
+
+  if (id === "") {
+    result.code = "fail";
+    result.message = "아이디를 입력해주세요";
+  }
+
+  if (password === "") {
+    result.code = "fail";
+    result.message = "비밀번호를 입력해주세요";
+  }
+
+  const user = await 디비실행(`SELECT * FROM user WHERE id='${id}'`);
+
+  if (user.length > 0) {
+    result.code = "fail";
+    result.message = "이미 동일한 아이디가 존재합니다";
+  }
+
+  if (result.code === "fail") {
+    res.send(result);
+    return;
+  }
+
+  await 디비실행(
+    `INSERT INTO user(id,password,name,level) VALUES('${id}','${password}','${name}','${level}')`
+  );
+
+  res.send(result);
+});
+
+app.get("/match", async (req, res) => {
+  const { loginUser } = req.session;
+
+  if (loginUser === undefined) {
+    return;
+  }
+
+  const query = `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE matchtime > NOW() AND user_seq != '${loginUser.seq}'ORDER BY matchtime DESC`;
+
+  const 날짜차이 = await 디비실행(
+    "SELECT DATEDIFF((SELECT matchtime FROM matching WHERE matchtry = 'YES' ORDER BY matchtime DESC LIMIT 1),(SELECT matchtime FROM matching WHERE matchtry = 'YES' ORDER BY matchtime ASC LIMIT 1)) AS diff_date , DATE_FORMAT(matchtime, '%Y-%m-%d') AS DATE FROM matching WHERE matchtry = 'YES' ORDER BY matchtime ASC LIMIT 1;"
+  );
+
+  const matchList = await 디비실행(query);
+  res.send({
+    matchList: matchList,
+    diff_date: 날짜차이[0],
+  });
+});
+
+app.post("/match", async (req, res) => {
+  const { place, address, time, memo, level } = req.body;
+  const { loginUser } = req.session;
+
+  const result = {
+    code: "success",
+    message: "매치가 등록 되었습니다",
+  };
+
+  if (place === "") {
+    result.code = "fail";
+    result.message = "장소를 입력해주세요";
+  }
+
+  if (address === "") {
+    result.code = "fail";
+    result.message = "주소를 입력해주세요";
+  }
+
+  if (time === "") {
+    result.code = "fail";
+    result.message = "경기 날짜를 입력해주세요";
+  }
+
+  if (result.code === "fail") {
+    res.send(result);
+    return;
+  }
+
+  await 디비실행(
+    `INSERT INTO matching(place,link,matchtime,memo,level,user_seq) VALUES('${place}','${address}','${time}','${memo}','${level}','${loginUser.seq}')`
+  );
+
+  res.send(result);
+});
+
+app.post("/match/apply", async (req, res) => {
+  const { seq } = req.body;
+  const {
+    loginUser: { seq: loginUserSeq = "1" },
+  } = req.session;
+  const result = {
+    code: "success",
+    message: "신청되었습니다",
+  };
+
+  let [{ attend_user_seq = "" }] = await 디비실행(
+    `SELECT * FROM matching WHERE seq = '${seq}'`
+  );
+
+  if (attend_user_seq !== "") {
+    const 참여자번호 = attend_user_seq
+      .split("/")
+      .filter((item) => {
+        return item !== "";
+      })
+      .join("','");
+
+    if (참여자번호.includes(loginUserSeq)) {
+      result.code = "fail";
+      result.message = "이미 신청하였습니다";
+      res.send(result);
+      return;
+    }
+  }
+
+  let new_attend_user_seq = `${attend_user_seq}${loginUserSeq}/`;
+  const query = `UPDATE matching SET attend_user_seq='${new_attend_user_seq}' WHERE seq='${seq}'`;
+
+  await 디비실행(query);
+
+  res.send(result);
+});
+
+app.get("/detail", async (req, res) => {
+  const { seq } = req.query;
+  const data = await 디비실행(
+    `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq FROM matching WHERE seq = '${seq}'`
+  );
+  res.send(data[0]);
+});
+
+app.get("/profile", async (req, res) => {
+  const { loginUser } = req.session;
+  const result = {
+    matches: undefined,
+    code: "success",
+    message: "매치목록입니다!",
+  };
+
+  if (loginUser === undefined) {
+    return;
+  }
+
+  const query = `SELECT seq, place, link, memo, LEVEL, DATE_FORMAT(matchtime, '%Y-%m-%d') AS matchday, DATE_FORMAT(matchtime, '%H:%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq FROM matching WHERE user_seq = '${loginUser.seq}' ORDER BY matchtime DESC`;
+
+  const matches = await 디비실행(query);
+
+  if (matches.length === 0) {
+    result.code = "fail";
+    result.message = "매치를 만들어보세요!";
+  }
+
+  if (result.code === "fail") {
+    res.send(result);
+    return;
+  }
+
+  result.matches = matches;
+
+  res.send(result);
+});
+
+app.get("/search", async (req, res) => {
+  const { search } = req.query;
+  const { loginUser } = req.session;
+
+  const query = `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE matchtime > NOW() AND matching.place LIKE '%${search}%' AND user_seq != '${loginUser.seq}'ORDER BY matchtime DESC`;
+
+  const matchList = await 디비실행(query);
+  res.send(matchList);
+});
+
+app.get("/search/click", async (req, res) => {
+  const { 날짜 } = req.query;
+  const { loginUser } = req.session;
+
+  const query = `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE DATE_FORMAT(matchtime, '%Y%m%d') = '${날짜}' AND user_seq != '${loginUser.seq}'ORDER BY matchtime DESC`;
+
+  const matchList = await 디비실행(query);
+  res.send(matchList);
+});
 
 cron.schedule("0 */6 * * *", async function () {
   console.log("6시간 마다 작업 실행");
@@ -128,242 +367,6 @@ cron.schedule("0 */1 * * *", async function () {
     const query = `UPDATE matching SET matchtry='${matchtry}' WHERE seq='${마감매칭값.seq}'`;
     await 디비실행(query);
   }
-});
-
-app.get("/detail", async (req, res) => {
-  const { seq } = req.query;
-  const data = await 디비실행(
-    `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq FROM matching WHERE seq = '${seq}'`
-  );
-  res.send(data[0]);
-});
-
-app.get("/users", (req, res) => {
-  res.json(req.session.loginUser || false);
-});
-
-app.post("/login", async (req, res) => {
-  const { id, password } = req.body;
-
-  const result = {
-    code: "success",
-    message: "로그인 되었습니다",
-  };
-
-  if (id === "") {
-    result.code = "fail";
-    result.message = "아이디 또는 비밀번호를 입력해주세요";
-    res.send(result);
-    return;
-  }
-
-  if (password === "") {
-    result.code = "fail";
-    result.message = "아이디 또는 비밀번호를 입력해주세요";
-    res.send(result);
-    return;
-  }
-
-  const user = await 디비실행(
-    `SELECT * FROM user WHERE id='${id}' AND password = '${password}'`
-  );
-
-  if (user.length === 0) {
-    result.code = "fail";
-    result.message = "사용자가 존재하지 않습니다";
-  }
-
-  if (result.code === "fail") {
-    res.send(result);
-    return;
-  }
-
-  req.session.loginUser = user[0];
-  req.session.save();
-
-  res.send(result);
-});
-
-app.post("/join", async (req, res) => {
-  const { id, name, level, password } = req.body;
-
-  const result = {
-    code: "success",
-    message: "회원가입 되었습니다",
-  };
-
-  if (id === "") {
-    result.code = "fail";
-    result.message = "아이디를 입력해주세요";
-  }
-
-  if (password === "") {
-    result.code = "fail";
-    result.message = "비밀번호를 입력해주세요";
-  }
-
-  const user = await 디비실행(`SELECT * FROM user WHERE id='${id}'`);
-
-  if (user.length > 0) {
-    result.code = "fail";
-    result.message = "이미 동일한 아이디가 존재합니다";
-  }
-
-  if (result.code === "fail") {
-    res.send(result);
-    return;
-  }
-
-  await 디비실행(
-    `INSERT INTO user(id,password,name,level) VALUES('${id}','${password}','${name}','${level}')`
-  );
-
-  res.send(result);
-});
-
-app.get("/match", async (req, res) => {
-  const { loginUser } = req.session;
-
-  if (loginUser === undefined) {
-    return;
-  }
-
-  const query = `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE matchtime > NOW() AND user_seq != '${loginUser.seq}'ORDER BY matchtime DESC`;
-
-  const 날짜차이 = await 디비실행(
-    "SELECT DATEDIFF((SELECT matchtime FROM matching WHERE matchtry = 'YES' ORDER BY matchtime DESC LIMIT 1),(SELECT matchtime FROM matching WHERE matchtry = 'YES' ORDER BY matchtime ASC LIMIT 1)) AS diff_date , DATE_FORMAT(matchtime, '%Y-%m-%d') AS DATE FROM matching WHERE matchtry = 'YES' ORDER BY matchtime ASC LIMIT 1;"
-  );
-
-  const matchList = await 디비실행(query);
-  res.send({
-    matchList: matchList,
-    diff_date: 날짜차이[0],
-  });
-});
-
-app.get("/profile", async (req, res) => {
-  const { loginUser } = req.session;
-  const result = {
-    matches: undefined,
-    code: "success",
-    message: "매치목록입니다!",
-  };
-
-  if (loginUser === undefined) {
-    return;
-  }
-
-  const query = `SELECT seq, place, link, memo, LEVEL, DATE_FORMAT(matchtime, '%Y-%m-%d') AS matchday, DATE_FORMAT(matchtime, '%H:%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq FROM matching WHERE user_seq = '${loginUser.seq}' ORDER BY matchtime DESC`;
-
-  const matches = await 디비실행(query);
-
-  if (matches.length === 0) {
-    result.code = "fail";
-    result.message = "매치를 만들어보세요!";
-  }
-
-  if (result.code === "fail") {
-    res.send(result);
-    return;
-  }
-
-  result.matches = matches;
-
-  res.send(result);
-});
-
-app.post("/match/apply", async (req, res) => {
-  const { seq } = req.body;
-  const {
-    loginUser: { seq: loginUserSeq = "1" },
-  } = req.session;
-  const result = {
-    code: "success",
-    message: "신청되었습니다",
-  };
-
-  let [{ attend_user_seq = "" }] = await 디비실행(
-    `SELECT * FROM matching WHERE seq = '${seq}'`
-  );
-
-  if (attend_user_seq !== "") {
-    const 참여자번호 = attend_user_seq
-      .split("/")
-      .filter((item) => {
-        return item !== "";
-      })
-      .join("','");
-
-    if (참여자번호.includes(loginUserSeq)) {
-      result.code = "fail";
-      result.message = "이미 신청하였습니다";
-      res.send(result);
-      return;
-    }
-  }
-
-  let new_attend_user_seq = `${attend_user_seq}${loginUserSeq}/`;
-  const query = `UPDATE matching SET attend_user_seq='${new_attend_user_seq}' WHERE seq='${seq}'`;
-
-  await 디비실행(query);
-
-  res.send(result);
-});
-
-app.post("/match", async (req, res) => {
-  const { place, address, time, memo, level } = req.body;
-  const { loginUser } = req.session;
-
-  const result = {
-    code: "success",
-    message: "매치가 등록 되었습니다",
-  };
-
-  if (place === "") {
-    result.code = "fail";
-    result.message = "장소를 입력해주세요";
-  }
-
-  if (address === "") {
-    result.code = "fail";
-    result.message = "주소를 입력해주세요";
-  }
-
-  if (time === "") {
-    result.code = "fail";
-    result.message = "경기 날짜를 입력해주세요";
-  }
-
-  if (result.code === "fail") {
-    res.send(result);
-    return;
-  }
-
-  await 디비실행(
-    `INSERT INTO matching(place,link,matchtime,memo,level,user_seq) VALUES('${place}','${address}','${time}','${memo}','${level}','${loginUser.seq}')`
-  );
-
-  res.send(result);
-});
-
-app.get("/search", async (req, res) => {
-  const { search } = req.query;
-  const { loginUser } = req.session;
-
-  const query = `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE matchtime > NOW() AND matching.place LIKE '%${search}%' AND user_seq != '${loginUser.seq}'ORDER BY matchtime DESC`;
-
-  const matchList = await 디비실행(query);
-  res.send(matchList);
-});
-
-app.get("/search/click", async (req, res) => {
-  const { 날짜 } = req.query;
-  const { loginUser } = req.session;
-
-  const query = `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE DATE_FORMAT(matchtime, '%Y%m%d') = '${날짜}' AND user_seq != '${loginUser.seq}'ORDER BY matchtime DESC`;
-
-  const matchList = await 디비실행(query);
-  res.send(matchList);
 });
 
 app.listen(port, () => {
