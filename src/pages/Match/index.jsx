@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import levelType from "util/levelType";
 import useInput from "hooks/useInput";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,6 +12,7 @@ function Match() {
   const [level, onChangeLevel] = useInput(1);
   const [time, onChangeTime] = useInput("");
   const [memo, onChangeMemo] = useInput("");
+  const [checkAdd, setCheckAdd] = useState(false);
 
   const navigation = useNavigate();
 
@@ -19,7 +20,7 @@ function Match() {
     navigation("/main");
   }, []);
 
-  const 매치등록 = useCallback(
+  const addMatch = useCallback(
     (e) => {
       e.preventDefault();
       axios({
@@ -28,10 +29,8 @@ function Match() {
         data: { place, address, time, memo, level },
       }).then((response) => {
         if (response.data.code === "success") {
-          toast.success(response.data.message, {
-            autoClose: 1000,
-            position: "bottom-center",
-          });
+          alert(response.data.message);
+          setCheckAdd(true);
         } else {
           toast.error(response.data.message, {
             autoClose: 1000,
@@ -42,6 +41,10 @@ function Match() {
     },
     [place, address, time, memo, level]
   );
+
+  if (checkAdd) {
+    return <Navigate to="/main" />;
+  }
 
   return (
     <div className="container">
@@ -85,7 +88,7 @@ function Match() {
             <h5>메모</h5>
             <input name="memo" onChange={onChangeMemo}></input>
 
-            <button type="button" onClick={매치등록}>
+            <button type="button" onClick={addMatch}>
               매치등록
             </button>
           </div>

@@ -1,19 +1,19 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import "pages/Main/styles.css";
 import fetcher from "util/fetcher";
 import useSWR from "swr";
-import { Navigate, useNavigate, useRevalidator } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import loading from "imgs/loading.png";
 import Navbar from "components/Navbar";
 import Footer from "components/Footer";
 import Carousel from "components/Carousel";
-import useInput from "hooks/useInput";
 import axios from "axios";
+import MatchList from "components/MatchList";
 
 function Main() {
-  const navigation = useNavigate();
-
   const { data: userData, mutate } = useSWR("/users", fetcher);
+
+  const navigation = useNavigate();
 
   const onMatch = useCallback(() => {
     navigation("/match");
@@ -30,10 +30,6 @@ function Main() {
       });
   }, []);
 
-  if (userData === undefined) {
-    return <img className="loading" src={loading} alt="로딩중..." />;
-  }
-
   if (!userData) {
     return <Navigate to="/login" />;
   }
@@ -41,14 +37,12 @@ function Main() {
   return (
     <div className="container">
       <Navbar onLogout={onLogout} />
-
       <Carousel />
-
+      <MatchList />
+      <Footer />
       <button className="matchBtn" onClick={onMatch}>
         🔜
       </button>
-
-      <Footer />
     </div>
   );
 }

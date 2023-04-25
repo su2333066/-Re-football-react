@@ -8,7 +8,9 @@ import useSWR from "swr";
 import loading from "imgs/loading.png";
 
 function LogIn() {
-  const { data: userData, mutate } = useSWR("/users", fetcher);
+  const { data: userData, mutate } = useSWR("/users", fetcher, {
+    refreshInterval: 10000,
+  });
 
   const [id, onChangeID] = useInput("");
   const [password, onChangePassword] = useInput("");
@@ -22,7 +24,7 @@ function LogIn() {
         data: { id, password },
       }).then((response) => {
         alert(response.data.message);
-        mutate("/api/user");
+        mutate(response.data.login, false);
       });
     },
     [id, password]

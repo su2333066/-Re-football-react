@@ -62,6 +62,7 @@ app.post("/login", async (req, res) => {
   const result = {
     code: "success",
     message: "로그인 되었습니다",
+    login: false,
   };
 
   if (id === "") {
@@ -94,6 +95,7 @@ app.post("/login", async (req, res) => {
 
   req.session.loginUser = user[0];
   req.session.save();
+  result.login = req.session.loginUser;
 
   res.send(result);
 });
@@ -150,17 +152,11 @@ app.get("/match", async (req, res) => {
     return;
   }
 
-  const query = `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE matchtime > NOW() AND user_seq != '${loginUser.seq}'ORDER BY matchtime DESC`;
-
-  const 날짜차이 = await 디비실행(
-    "SELECT DATEDIFF((SELECT matchtime FROM matching WHERE matchtry = 'YES' ORDER BY matchtime DESC LIMIT 1),(SELECT matchtime FROM matching WHERE matchtry = 'YES' ORDER BY matchtime ASC LIMIT 1)) AS diff_date , DATE_FORMAT(matchtime, '%Y-%m-%d') AS DATE FROM matching WHERE matchtry = 'YES' ORDER BY matchtime ASC LIMIT 1;"
-  );
-
+  const query =
+    "SELECT *, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching ORDER BY matchtime DESC;";
   const matchList = await 디비실행(query);
-  res.send({
-    matchList: matchList,
-    diff_date: 날짜차이[0],
-  });
+
+  res.send(matchList);
 });
 
 app.post("/match", async (req, res) => {

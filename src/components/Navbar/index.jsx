@@ -25,7 +25,7 @@ const Navbar = ({ myProfile, keywordSearch, setData, onLogout }) => {
           </div>
 
           <button onClick={onLogout}>
-            <i class="fa-regular fa-circle-xmark"></i>
+            <i className="fa-regular fa-circle-xmark"></i>
           </button>
         </div>
       </div>
