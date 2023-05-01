@@ -7,8 +7,15 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
+import useInput from "hooks/useInput";
 
-const Navbar = ({ myProfile, keywordSearch, setData, onLogout, onMatch }) => {
+const Navbar = ({
+  myProfile,
+  onKeywordSearch,
+  onChangeSearchKeyword,
+  onLogout,
+  onMatch,
+}) => {
   return (
     <div className="navbar">
       <div className="navContainer">
@@ -21,9 +28,9 @@ const Navbar = ({ myProfile, keywordSearch, setData, onLogout, onMatch }) => {
               type="search"
               autoComplete="off"
               placeholder="지역, 구장 이름으로 찾기"
-              onChange={setData}
+              onChange={onChangeSearchKeyword}
             />
-            <button className="icon" onClick={keywordSearch}>
+            <button className="icon" onClick={onKeywordSearch}>
               <SearchOutlined />
             </button>
           </div>

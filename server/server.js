@@ -269,14 +269,13 @@ app.get("/profile", async (req, res) => {
   res.send(result);
 });
 
-app.get("/search", async (req, res) => {
-  const { search } = req.query;
-  const { loginUser } = req.session;
+app.post("/search", async (req, res) => {
+  const { searchKeyword } = req.body;
 
-  const query = `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE matchtime > NOW() AND matching.place LIKE '%${search}%' AND user_seq != '${loginUser.seq}'ORDER BY matchtime DESC`;
+  const query = `SELECT *, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE place LIKE '%${searchKeyword}%' ORDER BY matchtime DESC`;
 
-  const matchList = await 디비실행(query);
-  res.send(matchList);
+  const searchedMatch = await 디비실행(query);
+  res.send(searchedMatch);
 });
 
 app.get("/search/click", async (req, res) => {

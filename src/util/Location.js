@@ -5,7 +5,7 @@ const Location = (props) => {
   useEffect(() => {
     const mapContainer = document.getElementById("kakaoMap"),
       mapOption = {
-        center: new kakao.maps.LatLng(0, 0),
+        center: new kakao.maps.LatLng(36.6424341, 127.4890319),
         level: 3,
       };
 
@@ -29,7 +29,7 @@ const Location = (props) => {
         map.setCenter(coords);
       }
     });
-  }, []);
+  }, [props]);
 
   return (
     <div className="detailHeader">

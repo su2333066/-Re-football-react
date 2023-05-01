@@ -13,7 +13,7 @@
 .mapWrap {
   max-width: 1024px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 25px 10px;
 }
 
 .mapWrap > #kakaoMap {
