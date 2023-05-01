@@ -20,18 +20,12 @@
   align-items: center;
 }
 
-.navbar .navContainer .navRight i {
-  background-color: white;
-  font-size: 14px;
-  padding: 12px;
-}
-
 .navbar .navContainer .navRight .navSearch {
   display: flex;
   align-items: center;
 }
 
-.navbar .navContainer .navRight .navSearch input {
+.navbar .navContainer .navRight .navSearch > input {
   display: none;
   width: 350px;
   background-color: #f2f5f7;
@@ -41,6 +35,11 @@
   font-size: 14px;
   border-radius: 6px;
   padding: 6px;
+}
+
+.icon {
+  background-color: white;
+  padding: 12px;
 }
 
 @media only screen and (min-width: 600px) {

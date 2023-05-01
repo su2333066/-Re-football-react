@@ -5,6 +5,10 @@ import levelType from "util/levelType";
 import useInput from "hooks/useInput";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { HomeOutlined } from "@ant-design/icons";
+import "antd/dist/reset.css";
+import fetcher from "util/fetcher";
+import useSWR from "swr";
 
 function Match() {
   const [place, onChangePlace] = useInput("");
@@ -15,6 +19,8 @@ function Match() {
   const [checkAdd, setCheckAdd] = useState(false);
 
   const navigation = useNavigate();
+
+  const { data: userData } = useSWR("/users", fetcher);
 
   const returnHome = useCallback(() => {
     navigation("/main");
@@ -44,6 +50,10 @@ function Match() {
 
   if (checkAdd) {
     return <Navigate to="/main" />;
+  }
+
+  if (!userData) {
+    return <Navigate to="/login" />;
   }
 
   return (
@@ -94,8 +104,8 @@ function Match() {
           </div>
         </div>
       </div>
-      <button className="matchBtn" onClick={returnHome}>
-        🔙
+      <button className="backBtn" onClick={returnHome}>
+        <HomeOutlined />
       </button>
       <ToastContainer />
     </div>

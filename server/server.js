@@ -152,8 +152,7 @@ app.get("/match", async (req, res) => {
     return;
   }
 
-  const query =
-    "SELECT *, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching ORDER BY matchtime DESC;";
+  const query = `SELECT *, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching ORDER BY matchtime DESC;`;
   const matchList = await 디비실행(query);
 
   res.send(matchList);
@@ -215,7 +214,7 @@ app.post("/match/apply", async (req, res) => {
       .filter((item) => {
         return item !== "";
       })
-      .join("','");
+      .join(",");
 
     if (참여자번호.includes(loginUserSeq)) {
       result.code = "fail";
@@ -233,11 +232,9 @@ app.post("/match/apply", async (req, res) => {
   res.send(result);
 });
 
-app.get("/detail", async (req, res) => {
-  const { seq } = req.query;
-  const data = await 디비실행(
-    `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq FROM matching WHERE seq = '${seq}'`
-  );
+app.get("/detail/:seq", async (req, res) => {
+  const seq = req.params.seq;
+  const data = await 디비실행(`SELECT * FROM matching WHERE seq = '${seq}'`);
   res.send(data[0]);
 });
 

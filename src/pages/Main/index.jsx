@@ -3,7 +3,6 @@ import "pages/Main/styles.css";
 import fetcher from "util/fetcher";
 import useSWR from "swr";
 import { Navigate, useNavigate } from "react-router-dom";
-import loading from "imgs/loading.png";
 import Navbar from "components/Navbar";
 import Footer from "components/Footer";
 import Carousel from "components/Carousel";
@@ -36,13 +35,10 @@ function Main() {
 
   return (
     <div className="container">
-      <Navbar onLogout={onLogout} />
+      <Navbar onLogout={onLogout} onMatch={onMatch} />
       <Carousel />
       <MatchList />
       <Footer />
-      <button className="matchBtn" onClick={onMatch}>
-        🔜
-      </button>
     </div>
   );
 }

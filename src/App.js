@@ -7,6 +7,7 @@ import Main from "pages/Main";
 import Match from "pages/Match";
 
 import { Routes, Route, Navigate } from "react-router-dom";
+import Detail from "pages/Detail";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route exact path="/login" element={<LogIn />} />
       <Route exact path="/main" element={<Main />} />
       <Route exact path="/match" element={<Match />} />
+      <Route exact path="/detail/:seq" element={<Detail />} />
     </Routes>
   );
 }

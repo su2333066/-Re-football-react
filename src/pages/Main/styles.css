@@ -4,19 +4,16 @@
   z-index: 9999;
 }
 
-.matchBtn {
+.backBtn {
   position: fixed;
-  bottom: 60px;
-  right: 60px;
-  padding: 10px 10px;
-  border: 0;
-  outline: 0;
+  bottom: 30px;
+  right: 30px;
+  padding: 10px;
   border-radius: 50%;
-  cursor: pointer;
-  font-size: 30px;
-  text-align: center;
-  background-color: #d9c1e9;
+  background-color: skyblue;
   color: white;
+  font-size: 24px;
+  z-index: 999;
 }
 
 .formContainer {

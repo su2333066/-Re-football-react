@@ -1,0 +1,155 @@
+.detailWrap {
+  height: 100vh;
+  margin: 0 auto;
+  background-color: #f2f5f7;
+}
+
+.detailHeader {
+  background-position: center;
+  background-repeat: none;
+  background-size: cover;
+}
+
+.mapWrap {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.mapWrap > #kakaoMap {
+  max-width: 1024px;
+  height: 448px;
+  background-color: #eee;
+}
+
+.bodyRight {
+  min-width: 380px;
+  height: fit-content;
+  position: sticky;
+  top: 10px;
+  z-index: 3;
+  padding: 30px 20px;
+  background-color: white;
+  margin: 10px;
+}
+
+.bodyLeft {
+  min-width: 580px;
+  height: fit-content;
+  padding: 30px 20px;
+  margin: 10px;
+  background-color: white;
+}
+
+.section {
+  padding: 30px 20px;
+  margin: 0px;
+}
+
+.matchPoint {
+  padding-bottom: 20px;
+}
+
+.matchRule ul li {
+  width: 48%;
+  padding: 10px;
+  display: inline-block;
+}
+
+.matchRule ul li .icon {
+  display: inline-block;
+  padding-right: 0px;
+}
+
+.matchRule ul li div {
+  display: inline-block;
+  padding-left: 10px;
+}
+
+.matchTime {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.matchTime p {
+  font-size: 18px;
+}
+
+.matchPlace {
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 20px;
+}
+
+.matchPlace a {
+  outline: none;
+  color: #222836;
+  text-decoration: none;
+  cursor: pointer;
+  color: #222836;
+  font-size: 20px;
+  font-weight: 400;
+  word-break: keep-all;
+}
+
+.matchAddress {
+  display: block;
+}
+
+.matchAddress p {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.matchAddress .address {
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  background-color: white;
+}
+
+.sectionBtnWrap {
+  position: initial;
+  max-width: 100%;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 20px;
+}
+
+.sectionBtnWrap .applyBtn {
+  display: flex;
+  align-items: center;
+  padding: 30px 20px;
+  border-top: 1px solid #c4cdd4;
+}
+
+.sectionBtnWrap .applyBtn button {
+  margin: 0;
+  border-radius: 10px;
+  padding: 12px 36px;
+  background-color: #1739aa;
+  width: 100%;
+  font-size: 16px;
+  color: #ffffff;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+
+@media (min-width: 950px) {
+  .detailBody {
+    display: flex;
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
+  .bodyLeft {
+    width: 60%;
+  }
+
+  .bodyRight {
+    width: 60%;
+  }
+}
