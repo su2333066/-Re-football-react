@@ -29,21 +29,25 @@ function Match() {
   const addMatch = useCallback(
     (e) => {
       e.preventDefault();
-      axios({
-        url: "/match",
-        method: "POST",
-        data: { place, address, time, memo, level },
-      }).then((response) => {
-        if (response.data.code === "success") {
-          alert(response.data.message);
-          setCheckAdd(true);
-        } else {
-          toast.error(response.data.message, {
-            autoClose: 1000,
-            position: "bottom-center",
-          });
-        }
-      });
+      axios
+        .post(
+          "/match",
+          { place, address, time, memo, level },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((response) => {
+          if (response.data.code === "success") {
+            alert(response.data.message);
+            setCheckAdd(true);
+          } else {
+            toast.error(response.data.message, {
+              autoClose: 1000,
+              position: "bottom-center",
+            });
+          }
+        });
     },
     [place, address, time, memo, level]
   );

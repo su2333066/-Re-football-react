@@ -22,31 +22,39 @@ function Detail() {
   const navigation = useNavigate();
 
   const 신청하기 = useCallback(() => {
-    axios({
-      url: "/match/apply",
-      method: "POST",
-      data: {
-        seq: seq,
-      },
-    }).then((response) => {
-      alert(response.data.message);
-      if (response.data.code === "success") {
-        mutate(response.data.attend, false);
-      }
-    });
+    axios
+      .post(
+        "/match/apply",
+        {
+          seq: seq,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        alert(response.data.message);
+        if (response.data.code === "success") {
+          mutate(response.data.attend, false);
+        }
+      });
   }, [seq]);
 
   const 취소하기 = useCallback(() => {
-    axios({
-      url: "/match/cancel",
-      method: "POST",
-      data: {
-        seq: seq,
-      },
-    }).then((response) => {
-      alert(response.data.message);
-      mutate(response.data.attend, false);
-    });
+    axios
+      .post(
+        "/match/cancel",
+        {
+          seq: seq,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        alert(response.data.message);
+        mutate(response.data.attend, false);
+      });
   }, [seq]);
 
   const returnHome = useCallback(() => {
@@ -54,16 +62,20 @@ function Detail() {
   }, []);
 
   const 삭제하기 = useCallback(() => {
-    axios({
-      url: "/match/delete",
-      method: "POST",
-      data: {
-        seq: seq,
-      },
-    }).then((response) => {
-      alert(response.data.message);
-      navigation("/main");
-    });
+    axios
+      .post(
+        "/match/delete",
+        {
+          seq: seq,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        alert(response.data.message);
+        navigation("/main");
+      });
   }, []);
 
   const 채팅하기 = useCallback(() => {}, []);

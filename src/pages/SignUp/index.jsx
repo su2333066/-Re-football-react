@@ -38,16 +38,14 @@ function SignUp() {
   const onSignUp = useCallback(
     (e) => {
       e.preventDefault();
-      axios({
-        url: "/join",
-        method: "POST",
-        data: { id, name, level, password },
-      }).then((response) => {
-        alert(response.data.message);
-        if (response.data.code === "success") {
-          navigation("/login");
-        }
-      });
+      axios
+        .post("/join", { id, name, level, password }, { withCredentials: true })
+        .then((response) => {
+          alert(response.data.message);
+          if (response.data.code === "success") {
+            navigation("/login");
+          }
+        });
     },
     [id, name, level, password]
   );

@@ -306,37 +306,6 @@ app.get("/detail/:seq", async (req, res) => {
   res.send(data[0]);
 });
 
-app.get("/profile", async (req, res) => {
-  const { loginUser } = req.session;
-  const result = {
-    matches: undefined,
-    code: "success",
-    message: "매치목록입니다!",
-  };
-
-  if (loginUser === undefined) {
-    return;
-  }
-
-  const query = `SELECT seq, place, link, memo, LEVEL, DATE_FORMAT(matchtime, '%Y-%m-%d') AS matchday, DATE_FORMAT(matchtime, '%H:%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq FROM matching WHERE user_seq = '${loginUser.seq}' ORDER BY matchtime DESC`;
-
-  const matches = await 디비실행(query);
-
-  if (matches.length === 0) {
-    result.code = "fail";
-    result.message = "매치를 만들어보세요!";
-  }
-
-  if (result.code === "fail") {
-    res.send(result);
-    return;
-  }
-
-  result.matches = matches;
-
-  res.send(result);
-});
-
 app.post("/search", async (req, res) => {
   const { searchKeyword } = req.body;
 
@@ -346,19 +315,11 @@ app.post("/search", async (req, res) => {
   res.send(searchedMatch);
 });
 
-app.get("/search/click", async (req, res) => {
-  const { 날짜 } = req.query;
-  const { loginUser } = req.session;
-
-  const query = `SELECT seq, place, link, memo, LEVEL, matchtry, DATE_FORMAT(matchtime, '%Y%m%d') AS matchday, DATE_FORMAT(matchtime, '%H%i') AS matchhour, regdate, updatedate, user_seq, attend_user_seq, match_user_seq, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE DATE_FORMAT(matchtime, '%Y%m%d') = '${날짜}' AND user_seq != '${loginUser.seq}'ORDER BY matchtime DESC`;
-
-  const matchList = await 디비실행(query);
-  res.send(matchList);
-});
-
-cron.schedule("0 */6 * * *", async function () {
+// 0 0 */6 * * * -> 6시간 마다
+cron.schedule("0 0 */6 * * *", async function () {
   console.log("6시간 마다 작업 실행");
 
+  // 마감매칭목록 매칭
   const 자동매치목록 = await 디비실행(
     `SELECT * FROM matching WHERE matchtry = 'NO' AND attend_user_seq != ''`
   );
@@ -404,9 +365,11 @@ cron.schedule("0 */6 * * *", async function () {
   }
 });
 
-cron.schedule("0 */1 * * *", async function () {
+// 0 0 */1 * * * -> 1시간 마다
+cron.schedule("0 0 */1 * * *", async function () {
   console.log("1시간 마다 작업 실행 :", new Date().toString());
 
+  // 매칭 하루전 마감매칭목록으로 변경
   const 마감매칭목록 = await 디비실행(
     `SELECT * , DATEDIFF(matchtime, NOW()) as date_diff FROM matching WHERE DATEDIFF(matchtime, NOW()) < 2`
   );
@@ -420,11 +383,12 @@ cron.schedule("0 */1 * * *", async function () {
 
     let matchtry = "DEL";
 
-    if (마감매칭값.date_diff == 1) {
+    if (마감매칭값.date_diff === 1) {
       matchtry = "NO";
     }
 
     const query = `UPDATE matching SET matchtry='${matchtry}' WHERE seq='${마감매칭값.seq}'`;
+
     await 디비실행(query);
   }
 });

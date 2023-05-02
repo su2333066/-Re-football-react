@@ -18,14 +18,12 @@ function LogIn() {
   const onLogIn = useCallback(
     (e) => {
       e.preventDefault();
-      axios({
-        url: "/login",
-        method: "POST",
-        data: { id, password },
-      }).then((response) => {
-        alert(response.data.message);
-        mutate(response.data.login, false);
-      });
+      axios
+        .post("/login", { id, password }, { withCredentials: true })
+        .then((response) => {
+          alert(response.data.message);
+          mutate(response.data.login, false);
+        });
     },
     [id, password]
   );
