@@ -118,24 +118,39 @@
   padding: 20px;
 }
 
-.sectionBtnWrap .applyBtn {
+.sectionBtnWrap .postBtn {
   display: flex;
   align-items: center;
   padding: 30px 20px;
   border-top: 1px solid #c4cdd4;
 }
 
-.sectionBtnWrap .applyBtn button {
+.sectionBtnWrap .postBtn > button {
   margin: 0;
   border-radius: 10px;
   padding: 12px 36px;
-  background-color: #1739aa;
   width: 100%;
   font-size: 16px;
   color: #ffffff;
   border: 0;
   outline: 0;
   cursor: pointer;
+}
+
+.apply {
+  background-color: #1739aa;
+}
+
+.delete {
+  background-color: red;
+}
+
+.cancel {
+  background-color: green;
+}
+
+.chat {
+  background-color: aquamarine;
 }
 
 @media (min-width: 950px) {

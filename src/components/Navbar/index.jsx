@@ -7,7 +7,6 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
-import useInput from "hooks/useInput";
 
 const Navbar = ({
   myProfile,

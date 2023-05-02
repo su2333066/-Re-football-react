@@ -83,6 +83,12 @@
   background-color: #eeeeee;
 }
 
+.matchStatus.isOwner {
+  color: #ccc;
+  background-color: #a925dd;
+  cursor: pointer;
+}
+
 .matchStatus.myMatch {
   background-color: green;
   color: white;

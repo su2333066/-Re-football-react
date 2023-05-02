@@ -15,7 +15,9 @@ import loading from "imgs/loading.png";
 function Detail() {
   const { seq } = useParams();
   const { data: userData } = useSWR("/users", fetcher);
-  const { data: detailData } = useSWR(`/detail/${seq}`, fetcher);
+  const { data: detailData, mutate } = useSWR(`/detail/${seq}`, fetcher, {
+    dedupingInterval: 10000,
+  });
 
   const navigation = useNavigate();
 
@@ -28,12 +30,43 @@ function Detail() {
       },
     }).then((response) => {
       alert(response.data.message);
+      if (response.data.code === "success") {
+        mutate(response.data.attend, false);
+      }
+    });
+  }, [seq]);
+
+  const 취소하기 = useCallback(() => {
+    axios({
+      url: "/match/cancel",
+      method: "POST",
+      data: {
+        seq: seq,
+      },
+    }).then((response) => {
+      alert(response.data.message);
+      mutate(response.data.attend, false);
     });
   }, [seq]);
 
   const returnHome = useCallback(() => {
     navigation("/main");
   }, []);
+
+  const 삭제하기 = useCallback(() => {
+    axios({
+      url: "/match/delete",
+      method: "POST",
+      data: {
+        seq: seq,
+      },
+    }).then((response) => {
+      alert(response.data.message);
+      navigation("/main");
+    });
+  }, []);
+
+  const 채팅하기 = useCallback(() => {}, []);
 
   if (detailData === undefined) {
     return <img className="loading" src={loading} alt="로딩중..." />;
@@ -128,9 +161,26 @@ function Detail() {
               </div>
             </div>
             <div className="sectionBtnWrap">
-              <div className="applyBtn" onClick={신청하기}>
-                <button>신청하기</button>
-              </div>
+              {detailData.match_user_seq === userData.seq ? (
+                <div className="postBtn" onClick={채팅하기}>
+                  <button className="chat">채팅</button>
+                </div>
+              ) : detailData.user_seq === userData.seq ? (
+                <div className="postBtn" onClick={삭제하기}>
+                  <button className="delete">삭제</button>
+                </div>
+              ) : !detailData.attend_user_seq
+                  .split("/")
+                  .map(Number)
+                  .includes(userData.seq) ? (
+                <div className="postBtn" onClick={신청하기}>
+                  <button className="apply">신청</button>
+                </div>
+              ) : (
+                <div className="postBtn" onClick={취소하기}>
+                  <button className="cancel">취소</button>
+                </div>
+              )}
             </div>
           </div>
         </div>

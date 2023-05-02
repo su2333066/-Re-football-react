@@ -83,7 +83,14 @@ app.post("/login", async (req, res) => {
     `SELECT * FROM user WHERE id='${id}' AND password = '${password}'`
   );
 
+  const userID = await 디비실행(`SELECT * FROM user WHERE id='${id}'`);
+
   if (user.length === 0) {
+    result.code = "fail";
+    result.message = "비밀번호를 다시 입력해주세요";
+  }
+
+  if (userID.length === 0) {
     result.code = "fail";
     result.message = "사용자가 존재하지 않습니다";
   }
@@ -196,9 +203,11 @@ app.post("/match", async (req, res) => {
 
 app.post("/match/apply", async (req, res) => {
   const { seq } = req.body;
+
   const {
     loginUser: { seq: loginUserSeq = "1" },
   } = req.session;
+
   const result = {
     code: "success",
     message: "신청되었습니다",
@@ -225,9 +234,68 @@ app.post("/match/apply", async (req, res) => {
   }
 
   let new_attend_user_seq = `${attend_user_seq}${loginUserSeq}/`;
+
   const query = `UPDATE matching SET attend_user_seq='${new_attend_user_seq}' WHERE seq='${seq}'`;
 
   await 디비실행(query);
+  const data = await 디비실행(`SELECT * FROM matching WHERE seq = '${seq}'`);
+
+  result.attend = data[0];
+
+  res.send(result);
+});
+
+app.post("/match/cancel", async (req, res) => {
+  const { seq } = req.body;
+
+  const {
+    loginUser: { seq: loginUserSeq = "1" },
+  } = req.session;
+
+  const result = {
+    code: "success",
+    message: "취소되었습니다",
+  };
+
+  let [{ attend_user_seq = "" }] = await 디비실행(
+    `SELECT * FROM matching WHERE seq = '${seq}'`
+  );
+
+  let attendData = attend_user_seq.split("/");
+  attendData.pop();
+  let newAttendData = "";
+
+  attendData.map((attendUserSeq) => {
+    if (Number(attendUserSeq) !== loginUserSeq) {
+      newAttendData += attendUserSeq + "/";
+    }
+  });
+
+  const query = `UPDATE matching SET attend_user_seq='${newAttendData}' WHERE seq='${seq}'`;
+
+  await 디비실행(query);
+  const data = await 디비실행(`SELECT * FROM matching WHERE seq = '${seq}'`);
+
+  result.attend = data[0];
+
+  res.send(result);
+});
+
+app.post("/match/delete", async (req, res) => {
+  const { seq } = req.body;
+
+  const {
+    loginUser: { seq: loginUserSeq = "1" },
+  } = req.session;
+
+  const result = {
+    code: "success",
+    message: "삭제되었습니다",
+  };
+
+  await 디비실행(
+    `DELETE FROM matching WHERE user_seq = '${loginUserSeq}' AND seq='${seq}'`
+  );
 
   res.send(result);
 });
