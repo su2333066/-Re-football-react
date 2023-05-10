@@ -14,17 +14,24 @@ import loading from "imgs/loading.png";
 
 function Detail() {
   const { seq } = useParams();
-  const { data: userData } = useSWR("/users", fetcher);
-  const { data: detailData, mutate } = useSWR(`/detail/${seq}`, fetcher, {
-    dedupingInterval: 10000,
-  });
+  const { data: userData } = useSWR(
+    `${process.env.REACT_APP_API_ROOT}/users`,
+    fetcher
+  );
+  const { data: detailData, mutate } = useSWR(
+    `${process.env.REACT_APP_API_ROOT}/detail/${seq}`,
+    fetcher,
+    {
+      dedupingInterval: 10000,
+    }
+  );
 
   const navigation = useNavigate();
 
   const 신청하기 = useCallback(() => {
     axios
       .post(
-        "/match/apply",
+        `${process.env.REACT_APP_API_ROOT}/match/apply`,
         {
           seq: seq,
         },
@@ -43,7 +50,7 @@ function Detail() {
   const 취소하기 = useCallback(() => {
     axios
       .post(
-        "/match/cancel",
+        `${process.env.REACT_APP_API_ROOT}/match/cancel`,
         {
           seq: seq,
         },
@@ -64,7 +71,7 @@ function Detail() {
   const 삭제하기 = useCallback(() => {
     axios
       .post(
-        "/match/delete",
+        `${process.env.REACT_APP_API_ROOT}/match/delete`,
         {
           seq: seq,
         },
@@ -79,7 +86,7 @@ function Detail() {
   }, []);
 
   const 수정하기 = useCallback(() => {
-    navigation(`/match/${seq}`);
+    navigation(`${process.env.REACT_APP_API_ROOT}/match/${seq}`);
   }, []);
 
   const 채팅하기 = useCallback(() => {}, []);

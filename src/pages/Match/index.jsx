@@ -22,7 +22,10 @@ function Match() {
 
   const navigation = useNavigate();
 
-  const { data: userData } = useSWR("/users", fetcher);
+  const { data: userData } = useSWR(
+    `${process.env.REACT_APP_API_ROOT}/users`,
+    fetcher
+  );
 
   const returnHome = useCallback(() => {
     navigation("/main");
@@ -33,7 +36,7 @@ function Match() {
       e.preventDefault();
       axios
         .post(
-          "/match",
+          `${process.env.REACT_APP_API_ROOT}/match`,
           { place, address, time, memo, level },
           {
             withCredentials: true,
@@ -59,7 +62,7 @@ function Match() {
       e.preventDefault();
       axios
         .post(
-          `/match/${seq}`,
+          `${process.env.REACT_APP_API_ROOT}/match/${seq}`,
           { place, address, time, memo, level },
           {
             withCredentials: true,

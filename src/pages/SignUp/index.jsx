@@ -8,7 +8,10 @@ import levelType from "util/levelType";
 import loading from "imgs/loading.png";
 
 function SignUp() {
-  const { data: userData } = useSWR("/users", fetcher);
+  const { data: userData } = useSWR(
+    `${process.env.REACT_APP_API_ROOT}/users`,
+    fetcher
+  );
 
   const [id, onChangeID] = useInput("");
   const [name, onChangeName] = useInput("");
@@ -39,7 +42,11 @@ function SignUp() {
     (e) => {
       e.preventDefault();
       axios
-        .post("/join", { id, name, level, password }, { withCredentials: true })
+        .post(
+          `${process.env.REACT_APP_API_ROOT}/join`,
+          { id, name, level, password },
+          { withCredentials: true }
+        )
         .then((response) => {
           alert(response.data.message);
           if (response.data.code === "success") {

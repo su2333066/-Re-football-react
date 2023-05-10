@@ -170,45 +170,20 @@ app.post("/match", async (req, res) => {
   const { place, address, time, memo, level } = req.body;
   const { loginUser } = req.session;
 
-  function checkSpecial(str) {
-    var special_pattern = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
-
-    if (special_pattern.test(str) == true) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   const result = {
     code: "success",
     message: "매치가 등록 되었습니다",
   };
 
-  if (place === "") {
-    result.code = "fail";
-    result.message = "장소를 입력해주세요";
-  }
-
-  if (address === "") {
-    result.code = "fail";
-    result.message = "주소를 입력해주세요";
-  }
-
-  if (time === "") {
-    result.code = "fail";
-    result.message = "경기 날짜를 입력해주세요";
-  }
-
   if (
-    checkSpecial(place) ||
-    checkSpecial(address) ||
-    checkSpecial(time) ||
-    checkSpecial(memo) ||
-    checkSpecial(level)
+    place === "" ||
+    address === "" ||
+    time === "" ||
+    memo === "" ||
+    level === ""
   ) {
     result.code = "fail";
-    result.message = "특수문자를 제거해주세요";
+    result.message = "모두 작성해주세요";
   }
 
   if (result.code === "fail") {

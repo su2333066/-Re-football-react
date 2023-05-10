@@ -11,7 +11,10 @@ import MatchList from "components/MatchList";
 import useInput from "hooks/useInput";
 
 function Main() {
-  const { data: userData, mutate } = useSWR("/users", fetcher);
+  const { data: userData, mutate } = useSWR(
+    `${process.env.REACT_APP_API_ROOT}/users`,
+    fetcher
+  );
   const [searchKeyword, onChangeSearchKeyword] = useInput("");
   const [searchData, setSearchData] = useState([]);
 
@@ -29,7 +32,7 @@ function Main() {
       } else {
         axios
           .post(
-            "/search",
+            `${process.env.REACT_APP_API_ROOT}/search`,
             { searchKeyword },
             {
               withCredentials: true,
@@ -54,7 +57,7 @@ function Main() {
 
   const onLogout = useCallback(() => {
     axios
-      .get("/logout", {
+      .get(`${process.env.REACT_APP_API_ROOT}/logout`, {
         withCredentials: true,
       })
       .then((response) => {
