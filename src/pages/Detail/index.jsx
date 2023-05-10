@@ -96,11 +96,7 @@ function Detail() {
   }, []);
 
   const 수정하기 = useCallback(() => {
-    navigation(
-      process.env.NODE_ENV === "production"
-        ? `http://3.38.255.11:4085/match/${seq}`
-        : `http://localhost:4085/match/${seq}`
-    );
+    navigation(`/match/${seq}`);
   }, []);
 
   const 채팅하기 = useCallback(() => {}, []);
