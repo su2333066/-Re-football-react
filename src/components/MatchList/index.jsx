@@ -145,7 +145,13 @@ const MatchList = ({ searchData }) => {
                             })}
                           </div>
                         </div>
-                        {parseInt(item.date_diff) < 1 ? (
+                        {item.user_seq === userData.seq ? (
+                          <div className="matchStatus isOwner">
+                            <p onClick={() => onDetailMatch(item)}>
+                              내가만든방
+                            </p>
+                          </div>
+                        ) : parseInt(item.date_diff) < 1 ? (
                           item.match_user_seq !== null ? (
                             <div className="matchStatus myMatch">
                               <p onClick={() => onDetailMatch(item)}>
