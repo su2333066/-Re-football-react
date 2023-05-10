@@ -24,7 +24,7 @@ function Detail() {
   const 신청하기 = useCallback(() => {
     axios
       .post(
-        "/match/apply",
+        process.env.REACT_APP_HOST + "/match/apply",
         {
           seq: seq,
         },
@@ -43,7 +43,7 @@ function Detail() {
   const 취소하기 = useCallback(() => {
     axios
       .post(
-        "/match/cancel",
+        process.env.REACT_APP_HOST + "/match/cancel",
         {
           seq: seq,
         },
@@ -64,7 +64,7 @@ function Detail() {
   const 삭제하기 = useCallback(() => {
     axios
       .post(
-        "/match/delete",
+        process.env.REACT_APP_HOST + "/match/delete",
         {
           seq: seq,
         },

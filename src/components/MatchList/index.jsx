@@ -18,10 +18,17 @@ const getDayOfWeek = (day) => {
 };
 
 const MatchList = ({ searchData }) => {
-  const { data: userData } = useSWR("/users", fetcher);
-  const { data: matchData } = useSWR("/match", fetcher, {
-    refreshInterval: 100000,
-  });
+  const { data: userData } = useSWR(
+    process.env.REACT_APP_HOST + "/users",
+    fetcher
+  );
+  const { data: matchData } = useSWR(
+    process.env.REACT_APP_HOST + "/match",
+    fetcher,
+    {
+      refreshInterval: 100000,
+    }
+  );
 
   const navigation = useNavigate();
 
