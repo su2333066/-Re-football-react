@@ -24,26 +24,30 @@ function Main() {
   const onKeywordSearch = useCallback(
     (e) => {
       e.preventDefault();
-      axios
-        .post(
-          "/search",
-          { searchKeyword },
-          {
-            withCredentials: true,
-          }
-        )
-        .then((response) => {
-          if (Object.keys(response.data).length === 2) {
-            alert(response.data.message);
-          } else if (response.data.searchedMatch.length === 0) {
-            alert("검색결과가 없습니다");
-          } else {
-            alert(
-              `${response.data.searchedMatch.length}개의 매치를 찾았습니다`
-            );
-            setSearchData(response.data.searchedMatch);
-          }
-        });
+      if (searchKeyword.length < 2) {
+        alert("두 글자이상 입력해주세요");
+      } else {
+        axios
+          .post(
+            "/search",
+            { searchKeyword },
+            {
+              withCredentials: true,
+            }
+          )
+          .then((response) => {
+            if (Object.keys(response.data).length === 2) {
+              alert(response.data.message);
+            } else if (response.data.searchedMatch.length === 0) {
+              alert("검색결과가 없습니다");
+            } else {
+              alert(
+                `${response.data.searchedMatch.length}개의 매치를 찾았습니다`
+              );
+              setSearchData(response.data.searchedMatch);
+            }
+          });
+      }
     },
     [searchKeyword]
   );
