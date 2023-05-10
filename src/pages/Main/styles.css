@@ -4,18 +4,6 @@
   z-index: 9999;
 }
 
-.backBtn {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  padding: 10px;
-  border-radius: 50%;
-  background-color: skyblue;
-  color: white;
-  font-size: 24px;
-  z-index: 999;
-}
-
 .formContainer {
   height: 100%;
   display: flex;

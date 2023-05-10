@@ -17,8 +17,9 @@ app.use(
 );
 app.use(
   cors({
-    origin: true,
+    origin: "http://localhost:3000",
     credentials: true,
+    optionsSuccessStatus: 200,
   })
 );
 
@@ -169,6 +170,16 @@ app.post("/match", async (req, res) => {
   const { place, address, time, memo, level } = req.body;
   const { loginUser } = req.session;
 
+  function checkSpecial(str) {
+    var special_pattern = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
+
+    if (special_pattern.test(str) == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   const result = {
     code: "success",
     message: "매치가 등록 되었습니다",
@@ -187,6 +198,17 @@ app.post("/match", async (req, res) => {
   if (time === "") {
     result.code = "fail";
     result.message = "경기 날짜를 입력해주세요";
+  }
+
+  if (
+    checkSpecial(place) ||
+    checkSpecial(address) ||
+    checkSpecial(time) ||
+    checkSpecial(memo) ||
+    checkSpecial(level)
+  ) {
+    result.code = "fail";
+    result.message = "특수문자를 제거해주세요";
   }
 
   if (result.code === "fail") {
@@ -300,19 +322,54 @@ app.post("/match/delete", async (req, res) => {
   res.send(result);
 });
 
+app.post("/match/:seq", async (req, res) => {
+  const seq = req.params.seq;
+  const { place, address, time, memo, level } = req.body;
+
+  const result = {
+    code: "success",
+    message: "수정되었습니다",
+  };
+
+  await 디비실행(
+    `UPDATE matching SET place = '${place}' , link = '${address}', memo = '${memo}', level = '${level}', matchtime = '${time}' WHERE seq = ${seq};`
+  );
+
+  res.send(result);
+});
+
 app.get("/detail/:seq", async (req, res) => {
   const seq = req.params.seq;
   const data = await 디비실행(`SELECT * FROM matching WHERE seq = '${seq}'`);
+
   res.send(data[0]);
 });
 
 app.post("/search", async (req, res) => {
-  const { searchKeyword } = req.body;
+  const result = {
+    code: "success",
+    message: "검색을 완료했습니다",
+  };
 
-  const query = `SELECT *, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE place LIKE '%${searchKeyword}%' ORDER BY matchtime DESC`;
+  let { searchKeyword } = req.body;
+
+  searchKeyword = searchKeyword.trim();
+
+  let special_pattern = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
+
+  if (special_pattern.test(searchKeyword) == true) {
+    result.code = "fail";
+    result.message = "특수문자 또는 공백이 입력되었습니다.";
+    res.send(result);
+    return;
+  }
+
+  const query = `SELECT *, DATEDIFF(matchtime, NOW()) AS date_diff FROM matching WHERE regexp_like(place, '${searchKeyword}') ORDER BY matchtime DESC`;
 
   const searchedMatch = await 디비실행(query);
-  res.send(searchedMatch);
+  result.searchedMatch = searchedMatch;
+
+  res.send(result);
 });
 
 // 0 0 */6 * * * -> 6시간 마다

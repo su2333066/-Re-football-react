@@ -33,8 +33,16 @@ function Main() {
           }
         )
         .then((response) => {
-          if (response.data.length === 0) alert("검색 결과가 없습니다");
-          else setSearchData(response.data);
+          if (Object.keys(response.data).length === 2) {
+            alert(response.data.message);
+          } else if (response.data.searchedMatch.length === 0) {
+            alert("검색결과가 없습니다");
+          } else {
+            alert(
+              `${response.data.searchedMatch.length}개의 매치를 찾았습니다`
+            );
+            setSearchData(response.data.searchedMatch);
+          }
         });
     },
     [searchKeyword]

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import levelType from "util/levelType";
 import useInput from "hooks/useInput";
 import { ToastContainer, toast } from "react-toastify";
@@ -11,12 +11,14 @@ import fetcher from "util/fetcher";
 import useSWR from "swr";
 
 function Match() {
+  const { seq } = useParams();
+
   const [place, onChangePlace] = useInput("");
   const [address, onChangeAddress] = useInput("");
   const [level, onChangeLevel] = useInput(1);
   const [time, onChangeTime] = useInput("");
   const [memo, onChangeMemo] = useInput("");
-  const [checkAdd, setCheckAdd] = useState(false);
+  const [check, setCheck] = useState(false);
 
   const navigation = useNavigate();
 
@@ -40,7 +42,7 @@ function Match() {
         .then((response) => {
           if (response.data.code === "success") {
             alert(response.data.message);
-            setCheckAdd(true);
+            setCheck(true);
           } else {
             toast.error(response.data.message, {
               autoClose: 1000,
@@ -52,7 +54,28 @@ function Match() {
     [place, address, time, memo, level]
   );
 
-  if (checkAdd) {
+  const modifyMatch = useCallback(
+    (e) => {
+      e.preventDefault();
+      axios
+        .post(
+          `/match/${seq}`,
+          { place, address, time, memo, level },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((response) => {
+          if (response.data.code === "success") {
+            alert(response.data.message);
+            setCheck(true);
+          }
+        });
+    },
+    [place, address, time, memo, level, seq]
+  );
+
+  if (check) {
     return <Navigate to="/main" />;
   }
 
@@ -102,9 +125,15 @@ function Match() {
             <h5>메모</h5>
             <input name="memo" onChange={onChangeMemo}></input>
 
-            <button type="button" onClick={addMatch}>
-              매치등록
-            </button>
+            {seq !== undefined ? (
+              <button type="button" onClick={modifyMatch}>
+                매치수정
+              </button>
+            ) : (
+              <button type="button" onClick={addMatch}>
+                매치등록
+              </button>
+            )}
           </div>
         </div>
       </div>

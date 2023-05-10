@@ -78,6 +78,10 @@ function Detail() {
       });
   }, []);
 
+  const 수정하기 = useCallback(() => {
+    navigation(`/match/${seq}`);
+  }, []);
+
   const 채팅하기 = useCallback(() => {}, []);
 
   if (detailData === undefined) {
@@ -155,6 +159,9 @@ function Detail() {
             </div>
           </div>
           <div className="bodyRight">
+            <button className="backBtn" onClick={returnHome}>
+              <HomeOutlined />
+            </button>
             <div className="section">
               <div className="matchTime">
                 <p>{dayjs(detailData.matchtime).format("YYYY-MM-DD HH:mm")}</p>
@@ -178,8 +185,13 @@ function Detail() {
                   <button className="chat">채팅</button>
                 </div>
               ) : detailData.user_seq === userData.seq ? (
-                <div className="postBtn" onClick={삭제하기}>
-                  <button className="delete">삭제</button>
+                <div className="postBtn">
+                  <button onClick={수정하기} className="modify">
+                    수정
+                  </button>
+                  <button onClick={삭제하기} className="delete">
+                    삭제
+                  </button>
                 </div>
               ) : !detailData.attend_user_seq
                   .split("/")
@@ -197,9 +209,6 @@ function Detail() {
           </div>
         </div>
       </div>
-      <button className="backBtn" onClick={returnHome}>
-        <HomeOutlined />
-      </button>
     </div>
   );
 }

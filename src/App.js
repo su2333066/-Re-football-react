@@ -17,6 +17,7 @@ function App() {
       <Route exact path="/login" element={<LogIn />} />
       <Route exact path="/main" element={<Main />} />
       <Route exact path="/match" element={<Match />} />
+      <Route exact path="/match/:seq" element={<Match />} />
       <Route exact path="/detail/:seq" element={<Detail />} />
     </Routes>
   );

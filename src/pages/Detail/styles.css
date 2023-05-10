@@ -115,7 +115,7 @@
   left: 0;
   right: 0;
   background-color: white;
-  padding: 20px;
+  padding: 20px 0px;
 }
 
 .sectionBtnWrap .postBtn {
@@ -129,6 +129,7 @@
   margin: 0;
   border-radius: 10px;
   padding: 12px 36px;
+  margin: 0px 4px;
   width: 100%;
   font-size: 16px;
   color: #ffffff;
@@ -142,7 +143,7 @@
 }
 
 .delete {
-  background-color: red;
+  background-color: tomato;
 }
 
 .cancel {
@@ -151,6 +152,22 @@
 
 .chat {
   background-color: aquamarine;
+}
+
+.modify {
+  background-color: royalblue;
+}
+
+.backBtn {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  padding: 8px;
+  border-radius: 50%;
+  background-color: skyblue;
+  color: white;
+  font-size: 24px;
+  z-index: 999;
 }
 
 @media (min-width: 950px) {
