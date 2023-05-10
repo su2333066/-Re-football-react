@@ -9,7 +9,9 @@ import loading from "imgs/loading.png";
 
 function SignUp() {
   const { data: userData } = useSWR(
-    `${process.env.REACT_APP_API_ROOT}/users`,
+    process.env.NODE_ENV === "production"
+      ? "http://3.38.255.11:4085/users"
+      : "http://localhost:4085/users",
     fetcher
   );
 
@@ -43,7 +45,9 @@ function SignUp() {
       e.preventDefault();
       axios
         .post(
-          `${process.env.REACT_APP_API_ROOT}/join`,
+          process.env.NODE_ENV === "production"
+            ? "http://3.38.255.11:4085/join"
+            : "http://localhost:4085/join",
           { id, name, level, password },
           { withCredentials: true }
         )

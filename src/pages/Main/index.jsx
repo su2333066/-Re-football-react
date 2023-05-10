@@ -12,7 +12,9 @@ import useInput from "hooks/useInput";
 
 function Main() {
   const { data: userData, mutate } = useSWR(
-    `${process.env.REACT_APP_API_ROOT}/users`,
+    process.env.NODE_ENV === "production"
+      ? "http://3.38.255.11:4085/users"
+      : "http://localhost:4085/users",
     fetcher
   );
   const [searchKeyword, onChangeSearchKeyword] = useInput("");
@@ -32,7 +34,9 @@ function Main() {
       } else {
         axios
           .post(
-            `${process.env.REACT_APP_API_ROOT}/search`,
+            process.env.NODE_ENV === "production"
+              ? "http://3.38.255.11:4085/search"
+              : "http://localhost:4085/search",
             { searchKeyword },
             {
               withCredentials: true,
@@ -57,9 +61,14 @@ function Main() {
 
   const onLogout = useCallback(() => {
     axios
-      .get(`${process.env.REACT_APP_API_ROOT}/logout`, {
-        withCredentials: true,
-      })
+      .get(
+        process.env.NODE_ENV === "production"
+          ? "http://3.38.255.11:4085/logout"
+          : "http://localhost:4085/logout",
+        {
+          withCredentials: true,
+        }
+      )
       .then((response) => {
         alert(response.data.message);
         mutate(false, false);

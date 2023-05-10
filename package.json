@@ -14,7 +14,6 @@
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "emotion": "^11.0.0",
-    "env-cmd": "^10.1.0",
     "react": "^18.2.0",
     "react-calendar": "^4.0.0",
     "react-copy-to-clipboard": "^5.1.0",
@@ -32,7 +31,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "env-cmd -f .env.production react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

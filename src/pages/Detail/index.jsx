@@ -15,11 +15,15 @@ import loading from "imgs/loading.png";
 function Detail() {
   const { seq } = useParams();
   const { data: userData } = useSWR(
-    `${process.env.REACT_APP_API_ROOT}/users`,
+    process.env.NODE_ENV === "production"
+      ? "http://3.38.255.11:4085/users"
+      : "http://localhost:4085/users",
     fetcher
   );
   const { data: detailData, mutate } = useSWR(
-    `${process.env.REACT_APP_API_ROOT}/detail/${seq}`,
+    process.env.NODE_ENV === "production"
+      ? `http://3.38.255.11:4085/detail/${seq}`
+      : `http://localhost:4085/detail/${seq}`,
     fetcher,
     {
       dedupingInterval: 10000,
@@ -31,7 +35,9 @@ function Detail() {
   const 신청하기 = useCallback(() => {
     axios
       .post(
-        `${process.env.REACT_APP_API_ROOT}/match/apply`,
+        process.env.NODE_ENV === "production"
+          ? "http://3.38.255.11:4085/match/apply"
+          : "http://localhost:4085/match/apply",
         {
           seq: seq,
         },
@@ -50,7 +56,9 @@ function Detail() {
   const 취소하기 = useCallback(() => {
     axios
       .post(
-        `${process.env.REACT_APP_API_ROOT}/match/cancel`,
+        process.env.NODE_ENV === "production"
+          ? "http://3.38.255.11:4085/match/cancel"
+          : "http://localhost:4085/match/cancel",
         {
           seq: seq,
         },
@@ -71,7 +79,9 @@ function Detail() {
   const 삭제하기 = useCallback(() => {
     axios
       .post(
-        `${process.env.REACT_APP_API_ROOT}/match/delete`,
+        process.env.NODE_ENV === "production"
+          ? "http://3.38.255.11:4085/match/delete"
+          : "http://localhost:4085/match/delete",
         {
           seq: seq,
         },
@@ -86,7 +96,11 @@ function Detail() {
   }, []);
 
   const 수정하기 = useCallback(() => {
-    navigation(`${process.env.REACT_APP_API_ROOT}/match/${seq}`);
+    navigation(
+      process.env.NODE_ENV === "production"
+        ? `http://3.38.255.11:4085/match/${seq}`
+        : `http://localhost:4085/match/${seq}`
+    );
   }, []);
 
   const 채팅하기 = useCallback(() => {}, []);

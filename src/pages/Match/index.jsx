@@ -23,7 +23,9 @@ function Match() {
   const navigation = useNavigate();
 
   const { data: userData } = useSWR(
-    `${process.env.REACT_APP_API_ROOT}/users`,
+    process.env.NODE_ENV === "production"
+      ? "http://3.38.255.11:4085/users"
+      : "http://localhost:4085/users",
     fetcher
   );
   const returnHome = useCallback(() => {
@@ -35,7 +37,9 @@ function Match() {
       e.preventDefault();
       axios
         .post(
-          `${process.env.REACT_APP_API_ROOT}/match`,
+          process.env.NODE_ENV === "production"
+            ? "http://3.38.255.11:4085/match"
+            : "http://localhost:4085/match",
           { place, address, time, memo, level },
           {
             withCredentials: true,
@@ -61,7 +65,9 @@ function Match() {
       e.preventDefault();
       axios
         .post(
-          `${process.env.REACT_APP_API_ROOT}/match/${seq}`,
+          process.env.NODE_ENV === "production"
+            ? `http://3.38.255.11:4085/match/${seq}`
+            : `http://localhost:4085/match/${seq}`,
           { place, address, time, memo, level },
           {
             withCredentials: true,

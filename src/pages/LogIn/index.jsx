@@ -9,7 +9,9 @@ import loading from "imgs/loading.png";
 
 function LogIn() {
   const { data: userData, mutate } = useSWR(
-    `${process.env.REACT_APP_API_ROOT}/users`,
+    process.env.NODE_ENV === "production"
+      ? "http://3.38.255.11:4085/users"
+      : "http://localhost:4085/users",
     fetcher,
     {
       refreshInterval: 10000,
@@ -23,7 +25,9 @@ function LogIn() {
       e.preventDefault();
       axios
         .post(
-          `${process.env.REACT_APP_API_ROOT}/login`,
+          process.env.NODE_ENV === "production"
+            ? "http://3.38.255.11:4085/login"
+            : "http://localhost:4085/login",
           { id, password },
           { withCredentials: true }
         )

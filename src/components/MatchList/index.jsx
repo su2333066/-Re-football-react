@@ -19,11 +19,15 @@ const getDayOfWeek = (day) => {
 
 const MatchList = ({ searchData }) => {
   const { data: userData } = useSWR(
-    `${process.env.REACT_APP_API_ROOT}/users`,
+    process.env.NODE_ENV === "production"
+      ? "http://3.38.255.11:4085/users"
+      : "http://localhost:4085/users",
     fetcher
   );
   const { data: matchData } = useSWR(
-    `${process.env.REACT_APP_API_ROOT}/match`,
+    process.env.NODE_ENV === "production"
+      ? "http://3.38.255.11:4085/match"
+      : "http://localhost:4085/match",
     fetcher,
     {
       refreshInterval: 100000,
