@@ -26,7 +26,6 @@ function Match() {
     `${process.env.REACT_APP_API_ROOT}/users`,
     fetcher
   );
-
   const returnHome = useCallback(() => {
     navigation("/main");
   }, []);
