@@ -39,11 +39,7 @@ function SignUp() {
     (e) => {
       e.preventDefault();
       axios
-        .post(
-          process.env.REACT_APP_HOST + "/join",
-          { id, name, level, password },
-          { withCredentials: true }
-        )
+        .post("/join", { id, name, level, password }, { withCredentials: true })
         .then((response) => {
           alert(response.data.message);
           if (response.data.code === "success") {

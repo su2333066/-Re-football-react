@@ -29,7 +29,7 @@ function Main() {
       } else {
         axios
           .post(
-            process.env.REACT_APP_HOST + "/search",
+            "/search",
             { searchKeyword },
             {
               withCredentials: true,

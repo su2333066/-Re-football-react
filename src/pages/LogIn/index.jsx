@@ -19,11 +19,7 @@ function LogIn() {
     (e) => {
       e.preventDefault();
       axios
-        .post(
-          process.env.REACT_APP_HOST + "/login",
-          { id, password },
-          { withCredentials: true }
-        )
+        .post("/login", { id, password }, { withCredentials: true })
         .then((response) => {
           alert(response.data.message);
           mutate(response.data.login, false);
